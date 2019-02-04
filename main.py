@@ -1,6 +1,7 @@
 import pygame
 from pygame.locals import *
-from player import Player
+from gameobjects import *
+from map import Map
 
 
 SCRREN_WIDTH = 800
@@ -10,9 +11,11 @@ SCREEN_HEIGHT = 600
 pygame.init()
 screen = pygame.display.set_mode((SCRREN_WIDTH, SCREEN_HEIGHT))
 player = Player(SCRREN_WIDTH, SCREEN_HEIGHT)
+map = Map(SCRREN_WIDTH, SCREEN_HEIGHT)
+door = Door(map.door_x, map.door_y, (255, 0, 0))
 
 game_objects = pygame.sprite.Group()
-game_objects.add(player)
+game_objects.add(door)
 
 background = pygame.Surface(screen.get_size())
 background.fill((0, 0, 0))
@@ -32,7 +35,11 @@ while running:
     pressed_keys = pygame.key.get_pressed()
     player.update(pressed_keys)
 
+    screen.blit(player.surf, player.rect)
+
     for entity in game_objects:
+        if player.is_collided_with(entity):
+            entity.on_collide()
         screen.blit(entity.surf, entity.rect)
 
     pygame.display.flip()
