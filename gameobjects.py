@@ -52,3 +52,6 @@ class GameObject(pygame.sprite.Sprite):
 class Door(GameObject):
     def __init__(self, x, y, color):
         super(Door, self).__init__(x, y, color)
+
+    def on_collide(self):
+        print("next level shit")

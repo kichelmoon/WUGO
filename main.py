@@ -1,4 +1,5 @@
 import pygame
+import helpers
 from pygame.locals import *
 from gameobjects import *
 from map import Map
@@ -11,8 +12,8 @@ SCREEN_HEIGHT = 600
 pygame.init()
 screen = pygame.display.set_mode((SCRREN_WIDTH, SCREEN_HEIGHT))
 player = Player(SCRREN_WIDTH, SCREEN_HEIGHT)
-map = Map(SCRREN_WIDTH, SCREEN_HEIGHT)
-door = Door(map.door_x, map.door_y, (255, 0, 0))
+game_map = Map(SCRREN_WIDTH, SCREEN_HEIGHT)
+door = Door(game_map.door_x, game_map.door_y, (255, 0, 0))
 
 game_objects = pygame.sprite.Group()
 game_objects.add(door)
@@ -21,7 +22,6 @@ background = pygame.Surface(screen.get_size())
 background.fill((0, 0, 0))
 
 running = True
-
 while running:
     for event in pygame.event.get():
         if event.type == KEYDOWN:
