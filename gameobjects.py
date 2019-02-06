@@ -1,4 +1,7 @@
 import pygame
+import userevents
+import helpers
+
 from pygame.locals import *
 
 
@@ -45,8 +48,8 @@ class GameObject(pygame.sprite.Sprite):
         self.rect.y = y
 
     def on_collide(self):
-        print("done")
-        self.kill()
+        helpers.log("touched an object")
+        return -1
 
 
 class Door(GameObject):
@@ -54,4 +57,5 @@ class Door(GameObject):
         super(Door, self).__init__(x, y, color)
 
     def on_collide(self):
-        print("next level shit")
+        self.kill()
+        return pygame.event.Event(userevents.NEXT_LEVEL)

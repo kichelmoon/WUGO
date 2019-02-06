@@ -1,5 +1,4 @@
 import pygame
-import helpers
 from pygame.locals import *
 from gameobjects import *
 from map import Map
@@ -13,10 +12,6 @@ pygame.init()
 screen = pygame.display.set_mode((SCRREN_WIDTH, SCREEN_HEIGHT))
 player = Player(SCRREN_WIDTH, SCREEN_HEIGHT)
 game_map = Map(SCRREN_WIDTH, SCREEN_HEIGHT)
-door = Door(game_map.door_x, game_map.door_y, (255, 0, 0))
-
-game_objects = pygame.sprite.Group()
-game_objects.add(door)
 
 background = pygame.Surface(screen.get_size())
 background.fill((0, 0, 0))
@@ -37,9 +32,15 @@ while running:
 
     screen.blit(player.surf, player.rect)
 
-    for entity in game_objects:
+    for entity in game_map.game_objects:
         if player.is_collided_with(entity):
-            entity.on_collide()
+            event = entity.on_collide()
+            if event != -1:
+                pygame.event.post(event)
         screen.blit(entity.surf, entity.rect)
+
+    for event in pygame.event.get():
+        if event.type == userevents.NEXT_LEVEL:
+            game_map = Map(SCRREN_WIDTH, SCREEN_HEIGHT)
 
     pygame.display.flip()
