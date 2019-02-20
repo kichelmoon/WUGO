@@ -1,23 +1,29 @@
-import pygame
-from pygame.locals import *
 from gameobjects import *
 from map import Map
+from player import *
 
 
-SCRREN_WIDTH = 800
-SCREEN_HEIGHT = 600
+class GameScreen:
+    def __init__(self, screen_width, screen_height):
+        self.width = screen_width
+        self.height = screen_height
 
 
 pygame.init()
-screen = pygame.display.set_mode((SCRREN_WIDTH, SCREEN_HEIGHT))
-player = Player(SCRREN_WIDTH, SCREEN_HEIGHT)
-game_map = Map(SCRREN_WIDTH, SCREEN_HEIGHT)
+game_screen = GameScreen(800, 600)
+screen = pygame.display.set_mode((game_screen.width, game_screen.height))
 
 background = pygame.Surface(screen.get_size())
 background.fill((0, 0, 0))
 
+start_stats = Stats(5, 100)
+player = Player(game_screen, start_stats)
+game_map = Map(game_screen.width, game_screen.height)
+
+clock = pygame.time.Clock()
 running = True
 while running:
+    clock.tick(30)
     for event in pygame.event.get():
         if event.type == KEYDOWN:
             if event.key == K_ESCAPE:
@@ -41,6 +47,6 @@ while running:
 
     for event in pygame.event.get():
         if event.type == userevents.NEXT_LEVEL:
-            game_map = Map(SCRREN_WIDTH, SCREEN_HEIGHT)
+            game_map = Map(game_screen.width, game_screen.height)
 
     pygame.display.flip()

@@ -1,6 +1,6 @@
 import random
 import pygame
-from gameobjects import Door
+from gameobjects import Door, Enemy
 
 
 class Map:
@@ -10,3 +10,4 @@ class Map:
         self.door = Door(width - 25, self.height - random.randint(0, self.height - 25), (255, 0, 0))
         self.game_objects = pygame.sprite.Group()
         self.game_objects.add(self.door)
+        self.game_objects.add(Enemy())
