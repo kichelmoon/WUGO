@@ -1,6 +1,7 @@
 from gameobjects import *
 from level import Level
 from player import *
+from maploader import Maploader
 
 
 class GameScreen:
@@ -18,9 +19,10 @@ pygame.init()
 game_screen = GameScreen(800, 600)
 screen = pygame.display.set_mode((game_screen.width, game_screen.height))
 
+my_map_loader = Maploader(800, 600)
 start_stats = Stats(5, 100)
 player = Player(game_screen, start_stats)
-level = Level(game_screen.width, game_screen.height)
+level = my_map_loader.load_map('level1')
 
 clock = pygame.time.Clock()
 running = True
@@ -38,14 +40,14 @@ while running:
 
     screen.blit(level.background, (0, 0))
 
-    if is_black_mode:
-        walls = level.black_walls
-    else:
-        walls = level.white_walls
-    draw_group(walls, screen)
+    # if is_black_mode:
+    #     walls = level.black_walls
+    # else:
+    #     walls = level.white_walls
+    draw_group(level.walls, screen)
 
     pressed_keys = pygame.key.get_pressed()
-    player.update(pressed_keys, walls)
+    player.update(pressed_keys, level.walls)
 
     screen.blit(player.surf, player.rect)
 
@@ -65,5 +67,6 @@ while running:
             level = Level(game_screen.width, game_screen.height)
         if event.type == userevents.SWITCH_COLORS:
             level.switch_background(is_black_mode)
+            is_black_mode = not is_black_mode
 
     pygame.display.flip()
