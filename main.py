@@ -1,5 +1,5 @@
 from gameobjects import *
-from map import Map
+from level import Level
 from player import *
 
 
@@ -9,19 +9,24 @@ class GameScreen:
         self.height = screen_height
 
 
+def draw_group(group, screen):
+    for entity in group:
+        screen.blit(entity.surf, entity.rect)
+
+
 pygame.init()
 game_screen = GameScreen(800, 600)
 screen = pygame.display.set_mode((game_screen.width, game_screen.height))
 
-background = pygame.Surface(screen.get_size())
-background.fill((0, 0, 0))
-
 start_stats = Stats(5, 100)
 player = Player(game_screen, start_stats)
-game_map = Map(game_screen.width, game_screen.height)
+level = Level(game_screen.width, game_screen.height)
 
 clock = pygame.time.Clock()
 running = True
+is_black_mode = True
+pygame.time.set_timer(userevents.SWITCH_COLORS, 250)
+
 while running:
     clock.tick(30)
     for event in pygame.event.get():
@@ -31,22 +36,34 @@ while running:
         elif event.type == QUIT:
             running = False
 
-    screen.blit(background, (0, 0))
+    screen.blit(level.background, (0, 0))
+
+    if is_black_mode:
+        walls = level.black_walls
+    else:
+        walls = level.white_walls
+    draw_group(walls, screen)
 
     pressed_keys = pygame.key.get_pressed()
-    player.update(pressed_keys)
+    player.update(pressed_keys, walls)
 
     screen.blit(player.surf, player.rect)
 
-    for entity in game_map.game_objects:
+    for entity in level.moving_objects:
+        entity.update()
+
+    for entity in level.game_objects:
         if player.is_collided_with(entity):
             event = entity.on_collide()
-            if event != -1:
+            if event is not None:
                 pygame.event.post(event)
+
         screen.blit(entity.surf, entity.rect)
 
     for event in pygame.event.get():
         if event.type == userevents.NEXT_LEVEL:
-            game_map = Map(game_screen.width, game_screen.height)
+            level = Level(game_screen.width, game_screen.height)
+        if event.type == userevents.SWITCH_COLORS:
+            level.switch_background(is_black_mode)
 
     pygame.display.flip()

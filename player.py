@@ -1,4 +1,5 @@
 import pygame
+import helpers
 from pygame.locals import *
 
 
@@ -17,16 +18,31 @@ class Player(pygame.sprite.Sprite):
         self.max_width = screen.width
         self.max_height = screen.height
         self.stats = start_stats
+        self.x_speed = 0
+        self.y_speed = 0
 
-    def update(self, pressed_keys):
+    def update(self, pressed_keys, walls):
         if pressed_keys[K_UP]:
-            self.rect.move_ip(0, -self.stats.speed)
-        if pressed_keys[K_DOWN]:
-            self.rect.move_ip(0, self.stats.speed)
+            self.y_speed = -self.stats.speed
+        elif pressed_keys[K_DOWN]:
+            self.y_speed = self.stats.speed
+        else:
+            self.y_speed = 0
+
         if pressed_keys[K_LEFT]:
-            self.rect.move_ip(-self.stats.speed, 0)
-        if pressed_keys[K_RIGHT]:
-            self.rect.move_ip(self.stats.speed, 0)
+            self.x_speed = -self.stats.speed
+        elif pressed_keys[K_RIGHT]:
+            self.x_speed = self.stats.speed
+        else:
+            self.x_speed = 0
+
+        new_rect = self.rect.move(self.x_speed, self.y_speed)
+
+        for wall in walls:
+            if new_rect.colliderect(wall.rect):
+                return
+
+        self.rect = new_rect
 
         if self.rect.left < 0:
             self.rect.left = 0

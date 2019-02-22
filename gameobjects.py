@@ -1,7 +1,6 @@
 import pygame
 import userevents
 import helpers
-import random
 
 
 class GameObject(pygame.sprite.Sprite):
@@ -14,8 +13,18 @@ class GameObject(pygame.sprite.Sprite):
         self.rect.y = y
 
     def on_collide(self):
-        helpers.log("touched an object")
-        return -1
+        helpers.log(["touched an object"])
+        return None
+
+
+class Wall(GameObject):
+    def __init__(self, x, y, dark_wall):
+        if dark_wall:
+            color = (0, 0, 0)
+        else:
+            color = (255, 255, 255)
+
+        super(Wall, self).__init__(x, y, color)
 
 
 class Door(GameObject):
@@ -24,18 +33,15 @@ class Door(GameObject):
 
     def on_collide(self):
         self.kill()
-        return pygame.event.Event(userevents.NEXT_LEVEL, None)
+        return pygame.event.Event(userevents.NEXT_LEVEL, {})
 
 
-class Enemy(pygame.sprite.Sprite):
-    def __init__(self):
-        super(Enemy, self).__init__()
-        self.surf = pygame.Surface((20, 10))
-        self.surf.fill((255, 255, 255))
-        self.rect = self.surf.get_rect(center=(820, random.randint(0, 600)))
-        self.speed = random.randint(5, 20)
+class Trap(GameObject):
+    def __init__(self, x, y, color):
+        super(Trap, self).__init__(x, y, color)
+        self.on = True
 
-    def update(self):
-        self.rect.move_ip(self.speed, 0)
-        if self.rect.right < 0:
-            self.kill()
+    def on_collide(self):
+        if self.on:
+            self.on = False
+            return pygame.event.Event(userevents.SWITCH_COLORS, {})
