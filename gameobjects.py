@@ -23,6 +23,7 @@ class Wall(GameObject):
             color = (0, 0, 0)
         else:
             color = (255, 255, 255)
+        self.black_wall = dark_wall
 
         super(Wall, self).__init__(x, y, tile_width, tile_height, color)
 

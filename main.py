@@ -40,14 +40,11 @@ while running:
 
     screen.blit(level.background, (0, 0))
 
-    # if is_black_mode:
-    #     walls = level.black_walls
-    # else:
-    #     walls = level.white_walls
-    draw_group(level.walls, screen)
+    walls = level.get_walls_for_mode(is_black_mode)
+    draw_group(walls, screen)
 
     pressed_keys = pygame.key.get_pressed()
-    player.update(pressed_keys, level.walls)
+    player.update(pressed_keys, walls)
 
     screen.blit(player.surf, player.rect)
 

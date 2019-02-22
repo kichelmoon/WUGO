@@ -14,7 +14,7 @@ class Player(pygame.sprite.Sprite):
         super(Player, self).__init__()
         self.surf = pygame.Surface((25, 25))
         self.surf.fill((255, 0, 255))
-        self.rect = self.surf.get_rect()
+        self.rect = self.surf.get_rect().move(100, 100)
         self.max_width = screen.width
         self.max_height = screen.height
         self.stats = start_stats
