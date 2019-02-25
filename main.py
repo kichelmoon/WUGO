@@ -31,11 +31,11 @@ pygame.time.set_timer(userevents.SWITCH_COLORS, 250)
 
 while running:
     clock.tick(30)
-    for event in pygame.event.get():
-        if event.type == KEYDOWN:
-            if event.key == K_ESCAPE:
+    for e in pygame.event.get():
+        if e.type == KEYDOWN:
+            if e.key == K_ESCAPE:
                 running = False
-        elif event.type == QUIT:
+        elif e.type == QUIT:
             running = False
 
     screen.blit(level.background, (0, 0))
@@ -49,21 +49,24 @@ while running:
     screen.blit(player.surf, player.rect)
 
     for entity in level.moving_objects:
-        entity.update()
+        entity.update(walls)
+        screen.blit(entity.surf, entity.rect)
 
     for entity in level.game_objects:
         if player.is_collided_with(entity):
-            event = entity.on_collide()
-            if event is not None:
-                pygame.event.post(event)
+            e = entity.on_player_collide()
+            if e is not None:
+                pygame.event.post(e)
 
         screen.blit(entity.surf, entity.rect)
 
-    for event in pygame.event.get():
-        if event.type == userevents.NEXT_LEVEL:
+    for e in pygame.event.get():
+        if e.type == userevents.NEXT_LEVEL:
             level = Level(game_screen.width, game_screen.height)
-        if event.type == userevents.SWITCH_COLORS:
+        if e.type == userevents.SWITCH_COLORS:
             level.switch_background(is_black_mode)
             is_black_mode = not is_black_mode
-
+        if e.type == userevents.FIRE_BULLET:
+            level.moving_objects.add(Bullet(e.x, e.y, e.dir, e.speed))
+            helpers.log([e.x, e.y])
     pygame.display.flip()
